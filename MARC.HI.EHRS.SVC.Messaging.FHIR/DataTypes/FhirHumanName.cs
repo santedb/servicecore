@@ -18,7 +18,6 @@ namespace MARC.HI.EHRS.SVC.Messaging.FHIR.DataTypes
         /// </summary>
         public FhirHumanName()
         {
-            this.Family = new List<FhirString>();
             this.Given = new List<FhirString>();
             this.Prefix = new List<FhirString>();
             this.Suffix = new List<FhirString>();
@@ -40,7 +39,7 @@ namespace MARC.HI.EHRS.SVC.Messaging.FHIR.DataTypes
         /// Gets or sets the family name
         /// </summary>
         [XmlElement("family")]
-        public List<FhirString> Family { get; set; }
+        public FhirString Family { get; set; }
 
         /// <summary>
         /// Gets or sets the given name
@@ -73,8 +72,8 @@ namespace MARC.HI.EHRS.SVC.Messaging.FHIR.DataTypes
         internal override void WriteText(System.Xml.XmlWriter w)
         {
             w.WriteStartElement("strong");
-            foreach (var n in this.Family)
-                w.WriteString(n + " ");
+            if(!String.IsNullOrEmpty(this.Family))
+                w.WriteString(this.Family + " ");
             w.WriteEndElement(); //strong
 
             w.WriteString(",");
@@ -106,8 +105,8 @@ namespace MARC.HI.EHRS.SVC.Messaging.FHIR.DataTypes
         {
             StringBuilder sb = new StringBuilder();
             
-            foreach (var n in this.Family)
-                sb.Append(n + " ");
+            if(!String.IsNullOrEmpty(this.Family))
+                sb.Append(this.Family + " ");
 
             sb.Append(",");
             if (this.Prefix.Count > 0)

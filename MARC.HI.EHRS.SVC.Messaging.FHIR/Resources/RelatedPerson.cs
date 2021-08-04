@@ -82,6 +82,11 @@ namespace MARC.HI.EHRS.SVC.Messaging.FHIR.Resources
         [FhirElement(MaxOccurs = 1)]
         public FhirAddress Address { get; set; }
 
+        [XmlElement("birthDate")]
+        [Description("Date of birth of relative")]
+        [FhirElement(MaxOccurs = 1)]
+        public FhirDate DateOfBirth { get; set; }
+
         /// <summary>
         /// Gets or sets the photograph of the person
         /// </summary>

@@ -77,30 +77,39 @@ namespace MARC.HI.EHRS.SVC.Messaging.HAPI.TransportProtocol
 		{
 		}
 
-		/// <summary>
-		/// Start the transport
-		/// </summary>
-		public virtual void Start(IPEndPoint bind, ServiceHandler handler)
-		{
-			this.m_timeout = handler.Definition.ReceiveTimeout;
-			this.m_listener = new TcpListener(bind);
+        /// <summary>
+        /// Start the transport
+        /// </summary>
+        public virtual void Start(IPEndPoint bind, ServiceHandler handler)
+        {
+            this.m_timeout = handler.Definition.ReceiveTimeout;
+            this.m_listener = new TcpListener(bind);
 
-			this.m_listener.Start();
-			Trace.TraceInformation("LLP Transport bound to {0}", bind);
+            this.m_listener.Start();
+            Trace.TraceInformation("LLP Transport bound to {0}", bind);
 
-			while (m_run) // run the service
-			{
-				var client = this.m_listener.AcceptTcpClient();
-				Thread clientThread = new Thread(OnReceiveMessage);
-				clientThread.IsBackground = true;
-				clientThread.Start(client);
-			}
-		}
+            while (m_run) // run the service
+            {
+                try
+                {
+                    var client = this.m_listener.AcceptTcpClient();
+                    Thread clientThread = new Thread(OnReceiveMessage);
+                    clientThread.IsBackground = true;
+                    clientThread.Name = "HL7Worker-" + Thread.CurrentThread.Name;
+                    clientThread.Start(client);
+                }
+                catch (Exception e)
+                {
+                    if (this.m_run)
+                        Trace.TraceError("Error on HL7 worker {0} - {1}", this.m_listener.LocalEndpoint, e);
+                }
+            }
+        }
 
-		/// <summary>
-		/// Receive and process message
-		/// </summary>
-		protected virtual void OnReceiveMessage(object client)
+        /// <summary>
+        /// Receive and process message
+        /// </summary>
+        protected virtual void OnReceiveMessage(object client)
 		{
 			TcpClient tcpClient = client as TcpClient;
 			NetworkStream stream = tcpClient.GetStream();

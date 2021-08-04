@@ -58,7 +58,7 @@ namespace MARC.HI.EHRS.SVC.Messaging.HAPI
 		private HL7ConfigurationSection m_configuration;
 
 		// Threads that are listening for messages
-		private List<Thread> m_listenerThreads = new List<Thread>();
+		private List<ServiceHandler> m_listenerThreads = new List<ServiceHandler>();
 
 		/// <summary>
 		/// Load configuration
@@ -77,13 +77,14 @@ namespace MARC.HI.EHRS.SVC.Messaging.HAPI
 
 			foreach (var sd in this.m_configuration.Services)
 			{
-				var sh = new ServiceHandler(sd);
-				Thread thdSh = new Thread(sh.Run);
-				thdSh.IsBackground = true;
-				this.m_listenerThreads.Add(thdSh);
-				Trace.TraceInformation("Starting HL7 Service '{0}'...", sd.Name);
-				thdSh.Start();
-			}
+                var sh = new ServiceHandler(sd);
+                Thread thdSh = new Thread(sh.Run);
+                thdSh.IsBackground = true;
+                thdSh.Name = $"HL7v2-{sd.Name}";
+                this.m_listenerThreads.Add(sh);
+                Trace.TraceInformation("Starting HL7 Service '{0}'...", sd.Name);
+                thdSh.Start();
+            }
 
 			this.Started?.Invoke(this, EventArgs.Empty);
 
@@ -96,9 +97,14 @@ namespace MARC.HI.EHRS.SVC.Messaging.HAPI
 		public bool Stop()
 		{
 			this.Stopping?.Invoke(this, EventArgs.Empty);
-			foreach (var thd in this.m_listenerThreads)
-				if (thd.IsAlive)
-					thd.Abort();
+            foreach (var thd in this.m_listenerThreads)
+            {
+                try
+                {
+                    thd.Abort();
+                }
+                catch { }
+            }
 			this.Stopped?.Invoke(this, EventArgs.Empty);
 			return true;
 		}

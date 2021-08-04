@@ -57,8 +57,11 @@ namespace MARC.HI.EHRS.SVC.Core.Wcf
                     usage = cpuCounter.NextValue();
                 
             }
+
+            var remoteIp = WebOperationContext.Current.IncomingRequest.Headers["X-Forwarded-For"];
+
             this.m_httpSource.TraceEvent(TraceEventType.Verbose, 0, "HTTP RQO {0} : {1} {2} ({3}) - {4} (CPU {5}%)", 
-                (OperationContext.Current.IncomingMessageProperties[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty)?.Address.ToString(),
+                remoteIp ?? (OperationContext.Current.IncomingMessageProperties[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty)?.Address.ToString(),
                 WebOperationContext.Current.IncomingRequest.Method,
                 WebOperationContext.Current.IncomingRequest.UriTemplateMatch?.RequestUri,
                 WebOperationContext.Current.IncomingRequest.UserAgent,

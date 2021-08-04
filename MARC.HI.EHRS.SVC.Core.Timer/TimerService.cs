@@ -35,7 +35,7 @@ namespace MARC.HI.EHRS.SVC.Core.Timer
     /// Represents the default implementation of the timer
     /// </summary>
     [Description("Default Timer Service")]
-    public class TimerService : ITimerService
+    public class TimerService : ITimerService, IDisposable
     {
         /// <summary>
         /// Timer configuration
@@ -207,6 +207,14 @@ namespace MARC.HI.EHRS.SVC.Core.Timer
         public bool IsJobRegistered(Type jobObject)
         {
             return this.m_log.Keys.Any(o => o.GetType() == jobObject);
+        }
+
+        /// <summary>
+        /// Dispose the service
+        /// </summary>
+        public void Dispose()
+        {
+            this.Stop();
         }
 
         /// <summary>

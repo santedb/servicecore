@@ -43,6 +43,7 @@ namespace MARC.HI.EHRS.SVC.Messaging.FHIR.Resources
     /// Represents a bundle of resources. DSTU2 replacement for feeds
     /// </summary>
     [XmlType("Bundle", Namespace = "http://hl7.org/fhir")]
+    [XmlRoot("Bundle", Namespace = "http://hl7.org/fhir")]
     public class Bundle : ResourceBase
     {
         /// <summary>

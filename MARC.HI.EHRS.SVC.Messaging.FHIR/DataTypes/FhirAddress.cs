@@ -63,6 +63,8 @@ namespace MARC.HI.EHRS.SVC.Messaging.FHIR.DataTypes
         [XmlElement("country")]
         public FhirString Country { get; set; }
 
+        [XmlElement("district")]
+        public FhirString District { get; set; }
         /// <summary>
         /// Gets or sets the period
         /// </summary>

@@ -100,10 +100,18 @@ namespace MARC.HI.EHRS.SVC.Messaging.HAPI
 			}
 		}
 
-		/// <summary>
-		/// Create a message stream
-		/// </summary>
-		private System.IO.Stream CreateMessageStream(NHapi.Base.Model.IMessage msg)
+        /// <summary>
+        /// Abort the operation
+        /// </summary>
+        internal void Abort()
+        {
+            this.m_transport.Stop();
+        }
+
+        /// <summary>
+        /// Create a message stream
+        /// </summary>
+        private System.IO.Stream CreateMessageStream(NHapi.Base.Model.IMessage msg)
 		{
 			NHapi.Base.Parser.PipeParser pp = new NHapi.Base.Parser.PipeParser();
 			return new MemoryStream(Encoding.ASCII.GetBytes(pp.Encode(msg)));
